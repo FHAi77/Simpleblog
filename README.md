@@ -32,6 +32,13 @@ pip install -r requirements.txt
 python app.py
 ```
 
+5.访问当前的ip地址即可（默认运行的端口是80）
+
+## 使用说明
+
+1. 使用 Markdown 格式撰写博客文章
+2. 点击首页右下角的上传文章按钮进行markdown文章上传
+
 ## Markdown 文件格式
 文章 Markdown 文件需包含 YAML 前置元数据：
 ```markdown
