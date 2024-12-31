@@ -12,8 +12,8 @@
 
 1. 克隆仓库
 ```bash
-git clone https://github.com/yourusername/personal-blog.git
-cd personal-blog
+git clone https://github.com/dazhongqi789/Simpleblog
+cd Simpleblog
 ```
 
 2. 创建虚拟环境
