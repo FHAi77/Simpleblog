@@ -1,0 +1,7 @@
+flask==3.0.0
+markdown2==2.4.10
+python-frontmatter==1.0.1
+flask-sqlalchemy==3.1.1
+flask-paginate==0.8.1
+python-slugify==8.0.1
+beautifulsoup4==4.12.2
