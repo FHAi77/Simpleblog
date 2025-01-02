@@ -381,15 +381,6 @@
                 </div>
                 {% endif %}
 
-                <div class="mt-4 text-center">
-                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-home"></i> 返回首页
-                    </a>
-                    <button type="button" class="btn btn-outline-danger ms-2" data-bs-toggle="modal"
-                        data-bs-target="#deletePostModal">
-                        <i class="fas fa-trash"></i> 删除文章
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -419,17 +410,56 @@
     </div>
     </div>
 
-    {# 隐藏的上传入口 #}
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-upload"></i>
-        </a>
-    </div>
-    </div>
 
+     
+                {# 隐藏的上传入口 #}
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                    <div class="d-flex flex-column align-items-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
+                            <i class="fas fa-home"></i> 返回首页
+                        </a>
+                        <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
+                            <i class="fas fa-upload"></i> 上传文章
+                        </a>
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePostModal">
+                            <i class="fas fa-trash"></i> 删除文章
+                        </button>
+                    </div>
+                </div>
+        
+
+    </div>
+<!-- 添加 Bootstrap 的 JavaScript 文件 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+// 删除文章模态框处理
+const deletePostForm = document.getElementById('deletePostForm');
+            if (deletePostForm) {
+                deletePostForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // 阻止默认提交
+                    
+                    const formData = new FormData(this);
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else {
+                            return response.text();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('删除文章时发生错误:', error);
+                        alert('删除文章失败，请重试');
+                    });
+                });
+            }
+
             const themeToggle = document.querySelector('.theme-toggle');
             const htmlElement = document.documentElement;
 
