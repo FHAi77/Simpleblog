@@ -435,6 +435,42 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            // 添加代码块复制按钮
+            const codeBlocks = document.querySelectorAll('pre code');
+            codeBlocks.forEach(block => {
+                // 创建复制按钮
+                const copyButton = document.createElement('button');
+                copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                copyButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'copy-code-btn');
+                copyButton.style.position = 'absolute';
+                copyButton.style.top = '10px';
+                copyButton.style.right = '10px';
+                copyButton.style.zIndex = '10';
+
+                // 为代码块添加相对定位，以便按钮正确定位
+                const blockWrapper = document.createElement('div');
+                blockWrapper.style.position = 'relative';
+                block.parentNode.insertBefore(blockWrapper, block);
+                blockWrapper.appendChild(block);
+                blockWrapper.appendChild(copyButton);
+
+                // 添加复制事件监听器
+                copyButton.addEventListener('click', () => {
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                        copyButton.style.color = 'green';
+                        setTimeout(() => {
+                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            copyButton.style.color = '';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        alert('复制代码失败');
+                    });
+                });
+            });
+
 // 删除文章模态框处理
 const deletePostForm = document.getElementById('deletePostForm');
             if (deletePostForm) {
