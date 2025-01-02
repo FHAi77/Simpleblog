@@ -32,7 +32,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-5.访问当前的ip地址即可（默认运行的端口是80）
+5. 访问当前的ip地址即可（默认运行的端口是80）
 
 ## 使用说明
 
