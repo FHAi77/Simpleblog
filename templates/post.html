@@ -411,54 +411,124 @@
     </div>
 
 
-     
-                {# 隐藏的上传入口 #}
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-                    <div class="d-flex flex-column align-items-end">
-                        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
-                            <i class="fas fa-home"></i> 返回首页
-                        </a>
-                        <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
-                            <i class="fas fa-upload"></i> 上传文章
-                        </a>
-                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePostModal">
-                            <i class="fas fa-trash"></i> 删除文章
-                        </button>
-                    </div>
-                </div>
-        
+
+    {# 隐藏的上传入口 #}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="d-flex flex-column align-items-end">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
+                <i class="fas fa-home"></i> 返回首页
+            </a>
+            <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
+                <i class="fas fa-upload"></i> 上传文章
+            </a>
+            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                data-bs-target="#deletePostModal">
+                <i class="fas fa-trash"></i> 删除文章
+            </button>
+        </div>
+    </div>
+
 
     </div>
-<!-- 添加 Bootstrap 的 JavaScript 文件 -->
-<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- 添加 Bootstrap 的 JavaScript 文件 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            
 
-// 删除文章模态框处理
-const deletePostForm = document.getElementById('deletePostForm');
+            // 安全的复制到剪贴板函数
+            function safeCopyToClipboard(text) {
+                // 检查 navigator.clipboard 是否可用
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(text);
+                }
+
+                // 备用方案：使用临时文本区域
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return Promise.resolve();
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    return Promise.reject(err);
+                }
+            }
+
+            // 代码高亮和复制按钮逻辑
+            document.querySelectorAll('pre code').forEach((block) => {
+                // 代码高亮
+                if (window.hljs) {
+                    hljs.highlightBlock(block);
+                }
+
+                // 创建复制按钮
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-code-btn btn btn-sm btn-outline-secondary';
+                copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                copyButton.title = '复制代码';
+                copyButton.style.position = 'absolute';
+                copyButton.style.top = '10px';
+                copyButton.style.right = '10px';
+                copyButton.style.zIndex = '10';
+
+                // 创建按钮容器
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.position = 'relative';
+
+                // 将代码块和按钮放入容器
+                block.parentNode.insertBefore(buttonContainer, block);
+                buttonContainer.appendChild(block);
+                buttonContainer.appendChild(copyButton);
+
+                // 复制功能
+                copyButton.addEventListener('click', () => {
+                    const code = block.textContent;
+                    safeCopyToClipboard(code).then(() => {
+                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                        copyButton.classList.add('text-success');
+                        setTimeout(() => {
+                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            copyButton.classList.remove('text-success');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        alert('复制代码失败');
+                    });
+                });
+            });
+
+
+
+
+            // 删除文章模态框处理
+            const deletePostForm = document.getElementById('deletePostForm');
             if (deletePostForm) {
-                deletePostForm.addEventListener('submit', function(e) {
+                deletePostForm.addEventListener('submit', function (e) {
                     e.preventDefault(); // 阻止默认提交
-                    
+
                     const formData = new FormData(this);
                     fetch(this.action, {
                         method: 'POST',
                         body: formData
                     })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            return response.text();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('删除文章时发生错误:', error);
-                        alert('删除文章失败，请重试');
-                    });
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                return response.text();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('删除文章时发生错误:', error);
+                            alert('删除文章失败，请重试');
+                        });
                 });
             }
 
@@ -479,38 +549,7 @@ const deletePostForm = document.getElementById('deletePostForm');
             });
 
             // 代码高亮
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightBlock(block);
 
-                // 添加复制按钮
-                const copyButton = document.createElement('button');
-                copyButton.className = 'copy-code-btn';
-                copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                copyButton.title = '复制代码';
-
-                // 创建按钮容器
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'code-block-container';
-                buttonContainer.style.position = 'relative';
-
-                // 将代码块和按钮放入容器
-                block.parentNode.insertBefore(buttonContainer, block);
-                buttonContainer.appendChild(block);
-                buttonContainer.appendChild(copyButton);
-
-                // 复制功能
-                copyButton.addEventListener('click', () => {
-                    const code = block.textContent;
-                    navigator.clipboard.writeText(code).then(() => {
-                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                        copyButton.style.color = 'green';
-                        setTimeout(() => {
-                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                            copyButton.style.color = '';
-                        }, 2000);
-                    });
-                });
-            });
         });
     </script>
 
