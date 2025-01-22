@@ -5,24 +5,30 @@ import markdown2
 import frontmatter
 from models import db, BlogPost
 import math
+from dotenv import load_dotenv
+
+# 加载环境变量
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+
+# 使用环境变量进行配置
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///blog.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'markdown_posts'
-app.secret_key = os.urandom(24)  # 用于闪存消息
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'markdown_posts')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24))
+
 db.init_app(app)
 
-# 固定上传密码
-UPLOAD_PASSWORD = 'fhAI77'
-
+# 使用单一操作密码
+OPERATION_PASSWORD = os.getenv('OPERATION_PASSWORD', 'fhAI77')
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_markdown():
     if request.method == 'POST':
-        # 验证上传密码
+        # 验证操作密码
         upload_password = request.form.get('upload_password')
-        if upload_password != UPLOAD_PASSWORD:
-            flash('上传密码错误，请重试', 'danger')
+        if upload_password != OPERATION_PASSWORD:
+            flash('操作密码错误，请重试', 'danger')
             return redirect(url_for('upload_markdown'))
 
         file = request.files['markdown_file']
@@ -48,6 +54,37 @@ def upload_markdown():
             return redirect(url_for('index'))
     
     return render_template('upload.html')
+
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    delete_password = request.form.get('delete_password')
+    
+    # 验证操作密码
+    if delete_password != OPERATION_PASSWORD:
+        flash('操作密码错误，请重试', 'danger')
+        return redirect(url_for('show_post', slug=post_id))
+    
+    # 查找并删除文章
+    post = BlogPost.query.get_or_404(post_id)
+    
+    try:
+        # 如果文章关联了Markdown文件，尝试删除文件
+        if post.markdown_file:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], post.markdown_file)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        
+        # 从数据库删除文章
+        db.session.delete(post)
+        db.session.commit()
+        
+        flash('文章删除成功！', 'success')
+        return redirect(url_for('index'))
+    
+    except Exception as e:
+        db.session.rollback()
+        flash(f'删除文章时发生错误：{str(e)}', 'danger')
+        return redirect(url_for('show_post', slug=post_id))
 
 @app.route('/')
 def index():

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <title>{{ post.title }} - 凤凰AI七社</title>
@@ -44,35 +45,45 @@
             color: var(--text-color-dark);
         }
 
-                html[data-theme='light'] .post-content {
-                    color: #333333;  /* 纯黑色 */
-                    line-height: 1.8;
-                }
-        
-                html[data-theme='light'] .post-content p {
-                    color: #333333;  /* 段落文字为黑色 */
-                }
-        
-                html[data-theme='light'] .post-content li {
-                    color: #333333;  /* 列表项文字为黑色 */
-                }
-        
-                html[data-theme='light'] .post-content blockquote {
-                    color: #333333;  /* 引用文字为深灰色 */
-                    border-left-color: #0066cc;
-                }
-                html[data-theme='light'] h1{
-                    color: #333333;  /* 标题为深灰色 */
-                    border-left-color: #0066cc;
-                }
-                html[data-theme='light'] h2{
-                    color: #333333;  /* 标题为深灰色 */
-                    border-left-color: #0066cc;
-                }
-                html[data-theme='light'] h3{
-                    color: #333333;  /* 标题为深灰色 */
-                    border-left-color: #0066cc;
-                }
+        html[data-theme='light'] .post-content {
+            color: #333333;
+            /* 纯黑色 */
+            line-height: 1.8;
+        }
+
+        html[data-theme='light'] .post-content p {
+            color: #333333;
+            /* 段落文字为黑色 */
+        }
+
+        html[data-theme='light'] .post-content li {
+            color: #333333;
+            /* 列表项文字为黑色 */
+        }
+
+        html[data-theme='light'] .post-content blockquote {
+            color: #333333;
+            /* 引用文字为深灰色 */
+            border-left-color: #0066cc;
+        }
+
+        html[data-theme='light'] h1 {
+            color: #333333;
+            /* 标题为深灰色 */
+            border-left-color: #0066cc;
+        }
+
+        html[data-theme='light'] h2 {
+            color: #333333;
+            /* 标题为深灰色 */
+            border-left-color: #0066cc;
+        }
+
+        html[data-theme='light'] h3 {
+            color: #333333;
+            /* 标题为深灰色 */
+            border-left-color: #0066cc;
+        }
 
         .theme-toggle {
             position: fixed;
@@ -106,6 +117,8 @@
 
         .side-navigation .blog-title img {
             max-width: 50px;
+            height: 50px;
+            border-radius: 50%;
             margin-right: 10px;
         }
 
@@ -175,11 +188,11 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .post-content h1, 
-        .post-content h2, 
-        .post-content h3, 
-        .post-content h4, 
-        .post-content h5, 
+        .post-content h1,
+        .post-content h2,
+        .post-content h3,
+        .post-content h4,
+        .post-content h5,
         .post-content h6 {
             margin-top: 1.5rem;
             margin-bottom: 1rem;
@@ -281,7 +294,7 @@
         .code-block-container {
             position: relative;
         }
-    
+
         .copy-code-btn {
             position: absolute;
             top: 10px;
@@ -293,17 +306,19 @@
             transition: color 0.3s;
             z-index: 10;
         }
-    
+
         .copy-code-btn:hover {
             color: #4da6ff;
         }
-    
+
         .post-content pre {
             position: relative;
-            padding-right: 40px; /* 为复制按钮留出空间 */
+            padding-right: 40px;
+            /* 为复制按钮留出空间 */
         }
     </style>
 </head>
+
 <body>
     <button class="btn btn-outline-primary theme-toggle" aria-label="切换主题">
         <i class="fas fa-adjust"></i>
@@ -366,76 +381,178 @@
                 </div>
                 {% endif %}
 
-                <div class="mt-4 text-center">
-                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-home"></i> 返回首页
-                    </a>
+            </div>
+        </div>
+
+        <!-- 删除文章确认模态框 -->
+        <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deletePostModalLabel">确认删除文章</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="deletePostForm" method="POST" action="{{ url_for('delete_post', post_id=post.id) }}">
+                            <div class="mb-3">
+                                <label for="deletePassword" class="form-label">请输入删除密码</label>
+                                <input type="password" class="form-control" id="deletePassword" name="delete_password"
+                                    required>
+                            </div>
+                            <button type="submit" class="btn btn-danger">确认删除</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {# 隐藏的上传入口 #}
-        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-            <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-upload"></i>
+    </div>
+    </div>
+
+
+
+    {# 隐藏的上传入口 #}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="d-flex flex-column align-items-end">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
+                <i class="fas fa-home"></i> 返回首页
             </a>
+            <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
+                <i class="fas fa-upload"></i> 上传文章
+            </a>
+            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                data-bs-target="#deletePostModal">
+                <i class="fas fa-trash"></i> 删除文章
+            </button>
         </div>
     </div>
 
+
+    </div>
+    <!-- 添加 Bootstrap 的 JavaScript 文件 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.querySelector('.theme-toggle');
-            const htmlElement = document.documentElement;
-    
-            // 初始化主题为黑暗模式
-            htmlElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('blog-theme', 'dark');
-    
-            // 主题切换逻辑
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
-                htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('blog-theme', newTheme);
-            });
-    
-            // 代码高亮
+
+
+            // 安全的复制到剪贴板函数
+            function safeCopyToClipboard(text) {
+                // 检查 navigator.clipboard 是否可用
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(text);
+                }
+
+                // 备用方案：使用临时文本区域
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return Promise.resolve();
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    return Promise.reject(err);
+                }
+            }
+
+            // 代码高亮和复制按钮逻辑
             document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightBlock(block);
-    
-                // 添加复制按钮
+                // 代码高亮
+                if (window.hljs) {
+                    hljs.highlightBlock(block);
+                }
+
+                // 创建复制按钮
                 const copyButton = document.createElement('button');
-                copyButton.className = 'copy-code-btn';
+                copyButton.className = 'copy-code-btn btn btn-sm btn-outline-secondary';
                 copyButton.innerHTML = '<i class="fas fa-copy"></i>';
                 copyButton.title = '复制代码';
-    
+                copyButton.style.position = 'absolute';
+                copyButton.style.top = '10px';
+                copyButton.style.right = '10px';
+                copyButton.style.zIndex = '10';
+
                 // 创建按钮容器
                 const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'code-block-container';
                 buttonContainer.style.position = 'relative';
-    
+
                 // 将代码块和按钮放入容器
                 block.parentNode.insertBefore(buttonContainer, block);
                 buttonContainer.appendChild(block);
                 buttonContainer.appendChild(copyButton);
-    
+
                 // 复制功能
                 copyButton.addEventListener('click', () => {
                     const code = block.textContent;
-                    navigator.clipboard.writeText(code).then(() => {
+                    safeCopyToClipboard(code).then(() => {
                         copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                        copyButton.style.color = 'green';
+                        copyButton.classList.add('text-success');
                         setTimeout(() => {
                             copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                            copyButton.style.color = '';
+                            copyButton.classList.remove('text-success');
                         }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        alert('复制代码失败');
                     });
                 });
             });
+
+
+
+
+            // 删除文章模态框处理
+            const deletePostForm = document.getElementById('deletePostForm');
+            if (deletePostForm) {
+                deletePostForm.addEventListener('submit', function (e) {
+                    e.preventDefault(); // 阻止默认提交
+
+                    const formData = new FormData(this);
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                return response.text();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('删除文章时发生错误:', error);
+                            alert('删除文章失败，请重试');
+                        });
+                });
+            }
+
+            const themeToggle = document.querySelector('.theme-toggle');
+            const htmlElement = document.documentElement;
+
+            // 初始化主题为黑暗模式
+            htmlElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('blog-theme', 'dark');
+
+            // 主题切换逻辑
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('blog-theme', newTheme);
+            });
+
+            // 代码高亮
+
         });
     </script>
 
 </body>
+
 </html>

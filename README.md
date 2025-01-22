@@ -32,7 +32,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-5.访问当前的ip地址即可（默认运行的端口是80）
+5. 访问当前的ip地址即可（默认运行的端口是80）
 
 ## 使用说明
 
@@ -48,3 +48,25 @@ tags: python, web
 ---
 
 文章正文内容...
+
+
+## 环境配置
+
+### 环境变量
+
+项目使用 `.env` 文件管理配置。请按照以下步骤配置：
+
+1. 复制 `.env.example` 为 `.env`
+2. 修改 `.env` 中的配置项：
+
+
+### 注意事项
+
+- 不要将 `.env` 文件提交到版本控制
+- `OPERATION_PASSWORD` 用于文章的上传和删除
+- `SECRET_KEY` 暂时未使用
+
+### 依赖安装
+
+```bash
+pip install python-dotenv
