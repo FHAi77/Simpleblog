@@ -1,0 +1,237 @@
+{
+  "name": "x阅读助手 copy",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -200
+      ],
+      "id": "e1e46690-180a-431d-beac-f5f60146f828",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "searchText": "manus",
+        "limit": 10,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        -280
+      ],
+      "id": "7ca37564-e330-4e81-a58e-ada67f9322b6",
+      "name": "X",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "q5opuxtKbpbLzEmn",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=x内容： {{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "你是一个语言学家，精通各国语言。我会给你一个x内容，如果不是中文，你能将内容翻译成简体中文，并分析内容的情绪倾向【积极，消极，中立】。例如：\n\nx内容：The GPT4.5 launched by openAI is ridiculously expensive and the chip is super low-end.\n\n回答：{\"oritxt\":\"The GPT4.5 launched by openAI is ridiculously expensive and the chip is super low-end.\",\"trantxt\":\"openAI发布的GPT4.5，价格太贵，性价比很低\",\"mood\":\"消极\"}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        0,
+        -280
+      ],
+      "id": "9bc88ad2-56fb-41a9-9818-16d8a25be27a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -20
+      ],
+      "id": "2b3284ba-9605-4c4b-9c79-576a11b68832",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "kkzNWDXdfXR9DoM1",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst parsedItems = items.map((item) => {\n  try {\n    item.json.output = JSON.parse(item.json.output);\n  } catch (e) {\n    console.log(\"Error parsing JSON:\", e);\n  }\n  return item;\n});\nreturn parsedItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        340,
+        -280
+      ],
+      "id": "5d33c0e5-b885-4845-8628-5e19073f27b9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1lIoLMAysw8bhjI3zdljdf96jrEbQ83AJxI8d1R9kAAw/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "x内容",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lIoLMAysw8bhjI3zdljdf96jrEbQ83AJxI8d1R9kAAw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "原始内容": "={{ $json.output.oritxt }}",
+            "译文": "={{ $json.output.trantxt }}",
+            "情绪": "={{ $json.output.mood }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "原始内容",
+              "displayName": "原始内容",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "译文",
+              "displayName": "译文",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "情绪",
+              "displayName": "情绪",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        -280
+      ],
+      "id": "3d85f08c-21cc-4ac5-a032-eebfce93f6b1",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wnDnefPxaP3j4eOj",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "X": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "39157519-7bf1-4e04-b180-c96ea08f4e27",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "affae7ae2589580f355110cac258c456470ff3d1f0070609f42b7c09de7dc127"
+  },
+  "id": "qu9f0o9YGNFJXs1W",
+  "tags": []
+}
