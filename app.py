@@ -33,6 +33,11 @@ def upload_markdown():
 
         file = request.files['markdown_file']
         if file:
+            filename = file.filename
+            if not (filename.endswith('.md') or filename.endswith('.markdown')):
+                flash('Invalid file type. Only Markdown files (.md, .markdown) are allowed.', 'danger')
+                return redirect(url_for('upload_markdown'))
+
             # 读取文件内容为文本
             file_content = file.read().decode('utf-8')
             
