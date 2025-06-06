@@ -33,7 +33,7 @@
      python -m venv venv
      ```
    - 激活虚拟环境：
-     - Windows: `venv\Scriptsctivate`
+     - Windows: `venv\Scripts\activate`
      - macOS/Linux: `source venv/bin/activate`
    - 激活成功后，命令行提示符前通常会显示 `(venv)`。
 
@@ -64,38 +64,20 @@
    - 程序默认在本地的 80 端口运行。
    - 打开您的网页浏览器，访问 `http://127.0.0.1` 或 `http://localhost` (如果80端口被占用，请根据 `app.py` 中的配置或命令行输出确认实际端口和IP地址)。
 
+**8. 使用自动化脚本:**
+   - 为了简化环境设置过程，项目提供了自动化脚本：
+     - Windows: 运行 `setup_venv.bat`
+     - macOS/Linux: 运行 `bash setup_venv.sh` (可能需要先执行 `chmod +x setup_venv.sh` 赋予执行权限)
+   - 这些脚本会自动创建虚拟环境并安装所有依赖。
+
 ---
-
-## 安装步骤
-
-1. 克隆仓库
-```bash
-git clone https://github.com/dazhongqi789/Simpleblog
-cd Simpleblog
-```
-
-2. 创建虚拟环境
-```bash
-python -m venv venv
-source venv/bin/activate  # Windows 使用 venv\Scripts\activate
-```
-
-3. 安装依赖
-```bash
-pip install -r requirements.txt
-```
-
-4. 初始化数据库并运行
-```bash
-python app.py
-```
-
-5. 访问当前的ip地址即可（默认运行的端口是80）
 
 ## 使用说明
 
 1. 使用 Markdown 格式撰写博客文章
 2. 点击首页右下角的上传文章按钮进行markdown文章上传
+3. 在文章页面右下角可以找到编辑文章按钮，用于修改已发布的文章
+4. 编辑文章时需要输入操作密码（与上传和删除文章相同）
 
 ## Markdown 文件格式
 文章 Markdown 文件需包含 YAML 前置元数据：
@@ -121,7 +103,7 @@ tags: python, web
 ### 注意事项
 
 - 不要将 `.env` 文件提交到版本控制
-- `OPERATION_PASSWORD` 用于文章的上传和删除
+- `OPERATION_PASSWORD` 用于文章的上传、编辑和删除
 - `SECRET_KEY` 暂时未使用
 
 ### 依赖安装

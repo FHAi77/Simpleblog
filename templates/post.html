@@ -412,7 +412,7 @@
 
 
 
-    {# 隐藏的上传入口 #}
+    {# 隐藏的操作入口 #}
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div class="d-flex flex-column align-items-end">
             <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
@@ -420,6 +420,9 @@
             </a>
             <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
                 <i class="fas fa-upload"></i> 上传文章
+            </a>
+            <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-outline-info btn-sm mb-2">
+                <i class="fas fa-edit"></i> 编辑文章
             </a>
             <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                 data-bs-target="#deletePostModal">

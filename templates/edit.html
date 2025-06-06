@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑文章 - {{ post.title }}</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 主题切换变量 */
+        :root {
+            --bg-color-light: #ffffff;
+            --text-color-light: #333333;
+            --bg-color-dark: #121212;
+            --text-color-dark: #e0e0e0;
+            --input-bg-light: #f8f9fa;
+            --input-bg-dark: #1e1e1e;
+        }
+
+        /* 全局主题样式 */
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        html[data-theme='dark'] {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        html[data-theme='dark'] body {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        /* 输入框样式 */
+        html[data-theme='dark'] .form-control {
+            background-color: var(--input-bg-dark);
+            color: var(--text-color-dark);
+            border-color: #333;
+        }
+
+        html[data-theme='dark'] .form-text {
+            color: #6c757d;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: #0056b3;
+        }
+
+        .alert-custom {
+            margin-top: 15px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        textarea.form-control {
+            min-height: 400px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" aria-label="切换主题">
+        🌓
+    </button>
+
+    <div class="container mt-5">
+        <h2>编辑文章</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-custom" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('edit_post', post_id=post.id) }}" method="post">
+            <div class="mb-3">
+                <label for="edit_password" class="form-label">操作密码</label>
+                <input type="password" class="form-control" id="edit_password" name="edit_password" required>
+                <small class="form-text text-muted">请输入正确的操作密码才能编辑文章</small>
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label">文章标题</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">标签</label>
+                <input type="text" class="form-control" id="tags" name="tags" value="{{ post.tags }}">
+                <small class="form-text text-muted">多个标签请用逗号分隔</small>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">文章内容</label>
+                <textarea class="form-control" id="content" name="content" rows="15" required>{{ post.content }}</textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">保存更改</button>
+                <a href="{{ url_for('show_post', slug=post.slug) }}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.querySelector('.theme-toggle');
+            const htmlElement = document.documentElement;
+
+            // 初始化主题
+            const savedTheme = localStorage.getItem('blog-theme') || 'light';
+            htmlElement.setAttribute('data-theme', savedTheme);
+
+            // 主题切换逻辑
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('blog-theme', newTheme);
+            });
+
+            // 自动隐藏闪存消息
+            const alerts = document.querySelectorAll('.alert-custom');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

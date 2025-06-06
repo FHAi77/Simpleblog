@@ -55,6 +55,34 @@ def upload_markdown():
     
     return render_template('upload.html')
 
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    # 查找文章
+    post = BlogPost.query.get_or_404(post_id)
+    
+    if request.method == 'POST':
+        # 验证操作密码
+        edit_password = request.form.get('edit_password')
+        if edit_password != OPERATION_PASSWORD:
+            flash('操作密码错误，请重试', 'danger')
+            return redirect(url_for('edit_post', post_id=post_id))
+        
+        # 更新文章内容
+        post.title = request.form.get('title')
+        post.content = request.form.get('content')
+        post.tags = request.form.get('tags')
+        
+        try:
+            db.session.commit()
+            flash('文章更新成功！', 'success')
+            return redirect(url_for('show_post', slug=post.slug))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'更新文章时发生错误：{str(e)}', 'danger')
+            return redirect(url_for('edit_post', post_id=post_id))
+    
+    return render_template('edit.html', post=post)
+
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):
     delete_password = request.form.get('delete_password')
