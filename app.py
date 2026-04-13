@@ -73,7 +73,11 @@ def edit_post(post_id):
             return redirect(url_for('edit_post', post_id=post_id))
         
         # 更新文章内容
-        post.title = request.form.get('title')
+        new_title = request.form.get('title')
+        # 如果标题发生变化，重新生成 slug
+        if post.title != new_title:
+            post.title = new_title
+            post.slug = post._generate_unique_slug(new_title)
         post.content = request.form.get('content')
         post.tags = request.form.get('tags')
         
