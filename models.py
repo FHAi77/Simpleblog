@@ -32,6 +32,9 @@ class BlogPost(db.Model):
             counter += 1
         return unique_slug
 
+    def update_slug(self, new_title):
+        self.slug = self._generate_unique_slug(new_title)
+
     def to_dict(self):
         return {
             'id': self.id,

@@ -1,47 +1,49 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>上传 Markdown 文章</title>
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('blog-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* 主题切换变量 */
-        :root {
-            --bg-color-light: #ffffff;
-            --text-color-light: #333333;
-            --bg-color-dark: #121212;
-            --text-color-dark: #e0e0e0;
-            --input-bg-light: #f8f9fa;
-            --input-bg-dark: #1e1e1e;
-        }
-
-        /* 全局主题样式 */
-        body {
-            transition: background-color 0.3s, color 0.3s;
+        :root,
+        html[data-theme='light'] {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --input-bg: #f8f9fa;
         }
 
         html[data-theme='dark'] {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --input-bg: #1e1e1e;
         }
 
-        html[data-theme='dark'] body {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
+        body {
+            transition: background-color 0.3s, color 0.3s;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
-        /* 输入框样式 */
+        .form-control {
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-color: #dee2e6;
+        }
+
         html[data-theme='dark'] .form-control {
-            background-color: var(--input-bg-dark);
-            color: var(--text-color-dark);
             border-color: #333;
         }
 
-        html[data-theme='dark'] .form-text {
+        .form-text {
             color: #6c757d;
         }
 
-        /* 主题切换按钮 */
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -109,7 +111,7 @@
             const htmlElement = document.documentElement;
 
             // 初始化主题
-            const savedTheme = localStorage.getItem('blog-theme') || 'light';
+            const savedTheme = localStorage.getItem('blog-theme') || 'dark';
             htmlElement.setAttribute('data-theme', savedTheme);
 
             // 主题切换逻辑

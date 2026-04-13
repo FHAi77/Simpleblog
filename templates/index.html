@@ -1,46 +1,60 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>凤凰AI七社</title>
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('blog-theme');
+                if (savedTheme) {
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch(e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --bg-color-light: #ffffff;
-            --bg-color-dark: #121212;
-            --text-color-light: #333333;
-            --text-color-dark: #e0e0e0;
-            --card-bg-dark: #1e1e1e;
-            --border-color-dark: #333;
-            --link-color-dark: #4da6ff;
-            --link-hover-color-dark: #80bcff;
+        :root,
+        html[data-theme='light'] {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --link-color: #0066cc;
+            --link-hover-color: #004499;
+        }
+
+        html[data-theme='dark'] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --link-color: #4da6ff;
+            --link-hover-color: #80bcff;
         }
 
         body {
             transition: background-color 0.3s, color 0.3s;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             overflow-x: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
-        html[data-theme='dark'] {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
+        .card {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-color: var(--border-color);
         }
 
-        html[data-theme='dark'] body {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
-        }
-
-        html[data-theme='dark'] .card {
-            background-color: var(--card-bg-dark);
-            color: var(--text-color-dark);
-            border-color: var(--border-color-dark);
-        }
-
-        html[data-theme='dark'] .card-title a {
-            color: var(--text-color-dark);
+        .card-title a {
+            color: var(--text-color);
         }
 
         .theme-toggle {
@@ -57,8 +71,8 @@
             width: 250px;
             height: 100vh;
             overflow-y: auto;
-            background-color: var(--card-bg-dark);
-            border-right: 1px solid var(--border-color-dark);
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
             padding-top: 20px;
             z-index: 1000;
             display: flex;
@@ -70,7 +84,7 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
-            border-bottom: 1px solid var(--border-color-dark);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .side-navigation .blog-title img {
@@ -83,7 +97,7 @@
         .side-navigation .blog-title-text {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--text-color-dark);
+            color: var(--text-color);
         }
 
         .side-navigation .list-container {
@@ -94,34 +108,34 @@
         .side-navigation .social-links {
             padding: 15px;
             text-align: center;
-            border-top: 1px solid var(--border-color-dark);
+            border-top: 1px solid var(--border-color);
         }
 
         .side-navigation .social-links a {
-            color: var(--link-color-dark);
+            color: var(--link-color);
             margin: 0 10px;
             font-size: 24px;
             transition: color 0.3s;
         }
 
         .side-navigation .social-links a:hover {
-            color: var(--link-hover-color-dark);
+            color: var(--link-hover-color);
         }
 
         .side-navigation .list-group-item {
             background-color: transparent;
-            border-color: var(--border-color-dark);
+            border-color: var(--border-color);
             padding: 0.5rem 1rem;
         }
 
         .side-navigation .list-group-item a {
-            color: var(--link-color-dark);
+            color: var(--link-color);
             text-decoration: none;
             transition: color 0.3s;
         }
 
         .side-navigation .list-group-item a:hover {
-            color: var(--link-hover-color-dark);
+            color: var(--link-hover-color);
         }
 
         .main-content {
@@ -139,14 +153,14 @@
 
         .social-links a {
             margin: 0 10px;
-            color: var(--link-color-dark);
+            color: var(--link-color);
             text-decoration: none;
             font-size: 24px;
             transition: color 0.3s;
         }
 
         .social-links a:hover {
-            color: var(--link-hover-color-dark);
+            color: var(--link-hover-color);
         }
 
     </style>
@@ -265,21 +279,17 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.querySelector('.theme-toggle');
-            const htmlElement = document.documentElement;
+        document.addEventListener('DOMContentLoaded', function() {
+            var themeToggle = document.querySelector('.theme-toggle');
+            var htmlElement = document.documentElement;
 
-            // 初始化主题为黑暗模式
-            htmlElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('blog-theme', 'dark');
-
-            // 主题切换逻辑
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
+            themeToggle.addEventListener('click', function() {
+                var currentTheme = htmlElement.getAttribute('data-theme');
+                var newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('blog-theme', newTheme);
+                try {
+                    localStorage.setItem('blog-theme', newTheme);
+                } catch(e) {}
             });
         });
     </script>
