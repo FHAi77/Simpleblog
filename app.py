@@ -73,7 +73,10 @@ def edit_post(post_id):
             return redirect(url_for('edit_post', post_id=post_id))
         
         # 更新文章内容
-        post.title = request.form.get('title')
+        new_title = request.form.get('title')
+        if new_title != post.title:
+            post.title = new_title
+            post.update_slug(new_title)
         post.content = request.form.get('content')
         post.tags = request.form.get('tags')
         
