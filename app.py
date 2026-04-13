@@ -64,19 +64,26 @@ def upload_markdown():
 def edit_post(post_id):
     # 查找文章
     post = BlogPost.query.get_or_404(post_id)
-    
+
     if request.method == 'POST':
         # 验证操作密码
         edit_password = request.form.get('edit_password')
         if edit_password != OPERATION_PASSWORD:
             flash('操作密码错误，请重试', 'danger')
             return redirect(url_for('edit_post', post_id=post_id))
-        
+
+        # 获取新标题
+        new_title = request.form.get('title')
+
+        # 如果标题发生变化，重新生成 slug
+        if new_title != post.title:
+            post.slug = post._generate_unique_slug(new_title)
+
         # 更新文章内容
-        post.title = request.form.get('title')
+        post.title = new_title
         post.content = request.form.get('content')
         post.tags = request.form.get('tags')
-        
+
         try:
             db.session.commit()
             flash('文章更新成功！', 'success')
@@ -85,7 +92,7 @@ def edit_post(post_id):
             db.session.rollback()
             flash(f'更新文章时发生错误：{str(e)}', 'danger')
             return redirect(url_for('edit_post', post_id=post_id))
-    
+
     return render_template('edit.html', post=post)
 
 @app.route('/delete_post/<int:post_id>', methods=['POST'])

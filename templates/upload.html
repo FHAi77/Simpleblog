@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>上传 Markdown 文章</title>
@@ -108,8 +108,8 @@
             const themeToggle = document.querySelector('.theme-toggle');
             const htmlElement = document.documentElement;
 
-            // 初始化主题
-            const savedTheme = localStorage.getItem('blog-theme') || 'light';
+            // 从 localStorage 读取保存的主题设置，默认为 dark
+            const savedTheme = localStorage.getItem('blog-theme') || 'dark';
             htmlElement.setAttribute('data-theme', savedTheme);
 
             // 主题切换逻辑
