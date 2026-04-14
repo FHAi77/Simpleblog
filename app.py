@@ -140,19 +140,17 @@ def show_post(slug):
     html_content = markdown2.markdown(
         post.content, 
         extras={
-            'code-friendly': True,
-            'fenced-code-blocks': True,
-            'highlightjs-class': True,
-            'tables': True,
-            'header-ids': True,
-            'task_lists': True,
-            'metadata': True,
-            'footnotes': True,
-            'strike': True,
+            'code-friendly': None,
+            'fenced-code-blocks': None,
+            'tables': None,
+            'header-ids': None,
+            'task_list': None,
+            'metadata': None,
+            'footnotes': None,
+            'strike': None,
             'toc': {
                 'depth': 6
-            },
-            'link-patterns': []  # 设置为空列表
+            }
         }
     )
     recent_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).limit(20).all()
