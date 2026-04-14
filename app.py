@@ -140,19 +140,18 @@ def show_post(slug):
     html_content = markdown2.markdown(
         post.content, 
         extras={
-            'code-friendly': True,
-            'fenced-code-blocks': True,
-            'highlightjs-class': True,
-            'tables': True,
-            'header-ids': True,
-            'task_lists': True,
-            'metadata': True,
-            'footnotes': True,
-            'strike': True,
+            'code-friendly': None,
+            'fenced-code-blocks': {'noclasses': True},
+            'tables': None,
+            'header-ids': None,
+            'task_lists': None,
+            'metadata': None,
+            'footnotes': None,
+            'strike': None,
             'toc': {
                 'depth': 6
             },
-            'link-patterns': []  # 设置为空列表
+            'link-patterns': []
         }
     )
     recent_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).limit(20).all()
@@ -166,4 +165,4 @@ def init_db():
         db.create_all()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', port=8180, debug=False)
