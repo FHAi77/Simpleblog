@@ -1,135 +1,49 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <title>上传 Markdown 文章</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* 主题切换变量 */
-        :root {
-            --bg-color-light: #ffffff;
-            --text-color-light: #333333;
-            --bg-color-dark: #121212;
-            --text-color-dark: #e0e0e0;
-            --input-bg-light: #f8f9fa;
-            --input-bg-dark: #1e1e1e;
-        }
+{% extends "base.html" %}
 
-        /* 全局主题样式 */
-        body {
-            transition: background-color 0.3s, color 0.3s;
-        }
+{% block title %}上传 Markdown 文章{% endblock %}
 
-        html[data-theme='dark'] {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
-        }
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="mb-4">
+                    <i class="fas fa-cloud-upload-alt me-2"></i>上传 Markdown 文章
+                </h2>
 
-        html[data-theme='dark'] body {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
-        }
-
-        /* 输入框样式 */
-        html[data-theme='dark'] .form-control {
-            background-color: var(--input-bg-dark);
-            color: var(--text-color-dark);
-            border-color: #333;
-        }
-
-        html[data-theme='dark'] .form-text {
-            color: #6c757d;
-        }
-
-        /* 主题切换按钮 */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background-color 0.3s;
-        }
-
-        .theme-toggle:hover {
-            background-color: #0056b3;
-        }
-
-        .alert-custom {
-            margin-top: 15px;
-            transition: opacity 0.3s ease-in-out;
-        }
-    </style>
-</head>
-<body>
-    <button class="theme-toggle" aria-label="切换主题">
-        🌓
-    </button>
-
-    <div class="container mt-5">
-        <h2>上传 Markdown 文章</h2>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-custom" role="alert">
-                        {{ message }}
+                <form action="{{ url_for('upload_markdown') }}" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="upload_password" class="form-label">
+                            <i class="fas fa-lock me-1"></i>上传密码
+                        </label>
+                        <input type="password" class="form-control" id="upload_password" name="upload_password" required>
+                        <small class="form-text text-muted">请输入正确的上传密码才能上传文章</small>
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form action="{{ url_for('upload_markdown') }}" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="upload_password" class="form-label">上传密码</label>
-                <input type="password" class="form-control" id="upload_password" name="upload_password" required>
-                <small class="form-text text-muted">请输入正确的上传密码才能上传文章</small>
+                    <div class="mb-3">
+                        <label for="markdown_file" class="form-label">
+                            <i class="fas fa-file-markdown me-1"></i>选择 Markdown 文件
+                        </label>
+                        <input class="form-control" type="file" id="markdown_file" name="markdown_file" accept=".md,.markdown" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-1"></i>上传文章
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i>取消
+                        </a>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="markdown_file" class="form-label">选择 Markdown 文件</label>
-                <input class="form-control" type="file" id="markdown_file" name="markdown_file" accept=".md" required>
-            </div>
-            <button type="submit" class="btn btn-primary">上传文章</button>
-        </form>
+        </div>
     </div>
+</div>
+{% endblock %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.querySelector('.theme-toggle');
-            const htmlElement = document.documentElement;
-
-            // 初始化主题
-            const savedTheme = localStorage.getItem('blog-theme') || 'light';
-            htmlElement.setAttribute('data-theme', savedTheme);
-
-            // 主题切换逻辑
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
-                htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('blog-theme', newTheme);
-            });
-
-            // 自动隐藏闪存消息
-            const alerts = document.querySelectorAll('.alert-custom');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.style.opacity = '0';
-                    setTimeout(() => alert.remove(), 300);
-                }, 3000);
-            });
-        });
-    </script>
-</body>
-</html>
+{% block action_buttons %}
+<div class="action-buttons">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-home"></i> <span>返回首页</span>
+    </a>
+</div>
+{% endblock %}
