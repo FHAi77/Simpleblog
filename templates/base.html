@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}凤凰AI七社{% endblock %}</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color-light: #ffffff;
+            --bg-color-dark: #121212;
+            --text-color-light: #333333;
+            --text-color-dark: #e0e0e0;
+            --card-bg-dark: #1e1e1e;
+            --border-color-dark: #333;
+            --link-color-dark: #4da6ff;
+            --link-hover-color-dark: #80bcff;
+            --input-bg-light: #f8f9fa;
+            --input-bg-dark: #1e1e1e;
+        }
+
+        body {
+            transition: background-color 0.3s, color 0.3s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        html[data-theme='dark'] {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        html[data-theme='dark'] body {
+            background-color: var(--bg-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        html[data-theme='dark'] .card {
+            background-color: var(--card-bg-dark);
+            color: var(--text-color-dark);
+            border-color: var(--border-color-dark);
+        }
+
+        html[data-theme='dark'] .card-title a {
+            color: var(--text-color-dark);
+        }
+
+        html[data-theme='dark'] .form-control {
+            background-color: var(--input-bg-dark);
+            color: var(--text-color-dark);
+            border-color: #333;
+        }
+
+        html[data-theme='dark'] .form-text {
+            color: #6c757d;
+        }
+
+        html[data-theme='light'] .post-content {
+            color: #333333;
+            line-height: 1.8;
+        }
+
+        html[data-theme='light'] .post-content p,
+        html[data-theme='light'] .post-content li,
+        html[data-theme='light'] .post-content blockquote,
+        html[data-theme='light'] h1,
+        html[data-theme='light'] h2,
+        html[data-theme='light'] h3 {
+            color: #333333;
+            border-left-color: #0066cc;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: #0056b3;
+        }
+
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1050;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+
+        .hamburger-menu:hover {
+            background-color: #0056b3;
+        }
+
+        .side-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .side-overlay.active {
+            display: block;
+        }
+
+        .side-navigation {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: var(--card-bg-dark);
+            border-right: 1px solid var(--border-color-dark);
+            padding-top: 80px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .side-navigation .blog-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color-dark);
+        }
+
+        .side-navigation .blog-title img {
+            max-width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .side-navigation .blog-title-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color-dark);
+        }
+
+        .side-navigation .search-box {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color-dark);
+        }
+
+        .side-navigation .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color-dark);
+            background-color: transparent;
+            color: var(--text-color-dark);
+        }
+
+        .side-navigation .tag-cloud {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color-dark);
+        }
+
+        .side-navigation .tag-cloud h6 {
+            color: var(--text-color-dark);
+            margin-bottom: 10px;
+        }
+
+        .side-navigation .tag-cloud .tag-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 2px;
+            background-color: #2c2c2c;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: var(--link-color-dark);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .side-navigation .tag-cloud .tag-badge:hover {
+            background-color: #3d3d3d;
+            color: var(--link-hover-color-dark);
+        }
+
+        .side-navigation .list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .side-navigation .list-container h6 {
+            padding: 10px 15px;
+            color: var(--text-color-dark);
+            margin: 0;
+        }
+
+        .side-navigation .social-links {
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid var(--border-color-dark);
+        }
+
+        .side-navigation .social-links a {
+            color: var(--link-color-dark);
+            margin: 0 10px;
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+
+        .side-navigation .social-links a:hover {
+            color: var(--link-hover-color-dark);
+        }
+
+        .side-navigation .list-group-item {
+            background-color: transparent;
+            border-color: var(--border-color-dark);
+            padding: 0.5rem 1rem;
+        }
+
+        .side-navigation .list-group-item a {
+            color: var(--link-color-dark);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .side-navigation .list-group-item a:hover {
+            color: var(--link-hover-color-dark);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding-top: 20px;
+            padding-right: 20px;
+            padding-left: 20px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .post-content {
+            line-height: 1.8;
+            color: var(--text-color-dark);
+        }
+
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-content h1,
+        .post-content h2,
+        .post-content h3,
+        .post-content h4,
+        .post-content h5,
+        .post-content h6 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color-dark);
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color-dark);
+        }
+
+        .post-content pre {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-right: 50px;
+        }
+
+        .post-content code {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid #4da6ff;
+            padding-left: 15px;
+            color: #a0a0a0;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-content table {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            color: var(--text-color-dark);
+            border-collapse: collapse;
+        }
+
+        .post-content table th,
+        .post-content table td {
+            padding: 12px;
+            border: 1px solid #333;
+        }
+
+        .post-content table thead {
+            background-color: #2c2c2c;
+        }
+
+        .post-content ul,
+        .post-content ol {
+            padding-left: 30px;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-content hr {
+            border-top: 1px solid #333;
+            margin: 1.5rem 0;
+        }
+
+        .post-content a {
+            color: #4da6ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .post-content a:hover {
+            color: #80bcff;
+            text-decoration: underline;
+        }
+
+        .post-content .task-list-item {
+            list-style-type: none;
+        }
+
+        .post-content .task-list-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .code-block-container {
+            position: relative;
+        }
+
+        .copy-code-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+
+        .copy-code-btn:hover {
+            color: #4da6ff;
+        }
+
+        .alert-custom {
+            margin-top: 15px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        textarea.form-control {
+            min-height: 400px;
+            font-family: monospace;
+        }
+
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        @media (max-width: 991.98px) {
+            .hamburger-menu {
+                display: flex;
+            }
+
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
+            .side-navigation {
+                transform: translateX(-100%);
+            }
+
+            .side-navigation.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-top: 80px;
+            }
+
+            .action-buttons {
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .action-buttons .btn {
+                width: 45px;
+                height: 45px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+            }
+
+            .action-buttons .btn span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .main-content {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
+            }
+
+            .post-content pre {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="hamburger-menu" aria-label="打开菜单">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <button class="theme-toggle" aria-label="切换主题">
+        <i class="fas fa-adjust"></i>
+    </button>
+
+    <div class="side-overlay"></div>
+
+    {% if not no_sidebar %}
+    <div class="side-navigation">
+        <div class="blog-title">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="凤凰AI七社 Logo">
+            <span class="blog-title-text">凤凰AI七社</span>
+        </div>
+
+        <div class="search-box">
+            <form action="{{ url_for('search') }}" method="GET">
+                <input type="text" name="q" placeholder="搜索文章..." value="{{ search_query|default('') }}">
+            </form>
+        </div>
+
+        {% if all_tags %}
+        <div class="tag-cloud">
+            <h6><i class="fas fa-tags me-2"></i>标签</h6>
+            {% for tag, count in all_tags %}
+            <a href="{{ url_for('tag_filter', tag=tag) }}" class="tag-badge">
+                {{ tag }} ({{ count }})
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="list-container">
+            <h6><i class="fas fa-clock me-2"></i>最新文章</h6>
+            <ul class="list-group list-group-flush">
+                {% for post in recent_posts[:20] %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('show_post_by_id', post_id=post.id) }}">
+                        {{ post.title }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="social-links">
+            <a href="https://www.youtube.com/channel/UCvnn8Y8Oa7IYsr0baoDDl2w" target="_blank" title="YouTube频道">
+                <i class="fab fa-youtube"></i>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-custom" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block action_buttons %}
+    <div class="action-buttons">
+        <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-upload"></i> <span>上传文章</span>
+        </a>
+    </div>
+    {% endblock %}
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.querySelector('.hamburger-menu');
+            const sidebar = document.querySelector('.side-navigation');
+            const overlay = document.querySelector('.side-overlay');
+            const themeToggle = document.querySelector('.theme-toggle');
+            const htmlElement = document.documentElement;
+
+            if (hamburger && sidebar && overlay) {
+                hamburger.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+
+            const savedTheme = localStorage.getItem('blog-theme') || 'dark';
+            htmlElement.setAttribute('data-theme', savedTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('blog-theme', newTheme);
+            });
+
+            function safeCopyToClipboard(text) {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(text);
+                }
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return Promise.resolve();
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    return Promise.reject(err);
+                }
+            }
+
+            document.querySelectorAll('pre code').forEach((block) => {
+                if (window.hljs) {
+                    hljs.highlightBlock(block);
+                }
+
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-code-btn btn btn-sm btn-outline-secondary';
+                copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                copyButton.title = '复制代码';
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.position = 'relative';
+
+                block.parentNode.insertBefore(buttonContainer, block);
+                buttonContainer.appendChild(block);
+                buttonContainer.appendChild(copyButton);
+
+                copyButton.addEventListener('click', () => {
+                    const code = block.textContent;
+                    safeCopyToClipboard(code).then(() => {
+                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                        copyButton.classList.add('text-success');
+                        setTimeout(() => {
+                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            copyButton.classList.remove('text-success');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                    });
+                });
+            });
+
+            const alerts = document.querySelectorAll('.alert-custom');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 3000);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

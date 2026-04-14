@@ -17,20 +17,11 @@ class BlogPost(db.Model):
 
     def __init__(self, title, content, markdown_file=None, tags=None):
         self.title = title
-        self.slug = self._generate_unique_slug(title)
+        self.slug = slugify(title)
         self.content = content
         self.markdown_file = markdown_file
         self.tags = tags
         self.meta_description = content[:150] if content else None
-
-    def _generate_unique_slug(self, title):
-        base_slug = slugify(title)
-        unique_slug = base_slug
-        counter = 1
-        while BlogPost.query.filter_by(slug=unique_slug).first() is not None:
-            unique_slug = f"{base_slug}-{counter}"
-            counter += 1
-        return unique_slug
 
     def to_dict(self):
         return {
