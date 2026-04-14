@@ -138,11 +138,10 @@ def index():
 def show_post(slug):
     post = BlogPost.query.filter_by(slug=slug).first_or_404()
     html_content = markdown2.markdown(
-        post.content, 
+        post.content,
         extras={
             'code-friendly': True,
-            'fenced-code-blocks': True,
-            'highlightjs-class': True,
+            'fenced-code-blocks': {},
             'tables': True,
             'header-ids': True,
             'task_lists': True,
@@ -152,7 +151,7 @@ def show_post(slug):
             'toc': {
                 'depth': 6
             },
-            'link-patterns': []  # 设置为空列表
+            'link-patterns': []
         }
     )
     recent_posts = BlogPost.query.order_by(BlogPost.created_at.desc()).limit(20).all()
