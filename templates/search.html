@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}搜索: {{ query }} - 凤凰AI七社{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">搜索结果: "{{ query }}"</h2>
+        
+        {% if posts %}
+            <p class="text-muted mb-3">找到 {{ total }} 篇文章</p>
+            
+            {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <a href="{{ url_for('show_post', post_id=post.id) }}" class="text-decoration-none">
+                            {{ post.title }}
+                        </a>
+                    </h4>
+                    <p class="card-text text-muted">
+                        <small>发布于 {{ post.created_at.strftime('%Y-%m-%d') }}</small>
+                    </p>
+                    <p class="card-text">{{ post.content[:150] }}...</p>
+                    <a href="{{ url_for('show_post', post_id=post.id) }}" class="btn btn-outline-primary btn-sm">
+                        查看详情
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if total_pages > 1 %}
+            <nav aria-label="搜索结果分页">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('search', q=query, page=page-1) }}">上一页</a>
+                    </li>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                        <li class="page-item {{ 'active' if p == page else '' }}">
+                            <a class="page-link" href="{{ url_for('search', q=query, page=p) }}">{{ p }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('search', q=query, page=page+1) }}">下一页</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info text-center">
+                未找到与 "{{ query }}" 相关的文章
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from slugify import slugify
+import time
 
 db = SQLAlchemy()
 
@@ -25,10 +26,12 @@ class BlogPost(db.Model):
 
     def _generate_unique_slug(self, title):
         base_slug = slugify(title)
-        unique_slug = base_slug
+        timestamp = int(time.time())
+        unique_slug = f"{base_slug}-{timestamp}"
+        
         counter = 1
         while BlogPost.query.filter_by(slug=unique_slug).first() is not None:
-            unique_slug = f"{base_slug}-{counter}"
+            unique_slug = f"{base_slug}-{timestamp}-{counter}"
             counter += 1
         return unique_slug
 

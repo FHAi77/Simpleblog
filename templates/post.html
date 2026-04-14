@@ -1,561 +1,173 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>{{ post.title }} - 凤凰AI七社</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color-light: #ffffff;
-            --bg-color-dark: #121212;
-            --text-color-light: #333333;
-            --text-color-dark: #e0e0e0;
-            --card-bg-dark: #1e1e1e;
-            --border-color-dark: #333;
-            --link-color-dark: #4da6ff;
-            --link-hover-color-dark: #80bcff;
-        }
+{% block title %}{{ post.title }} - 凤凰AI七社{% endblock %}
 
-        body {
-            transition: background-color 0.3s, color 0.3s;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow-x: hidden;
-        }
+{% block extra_css %}
+<link href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" rel="stylesheet">
+{% endblock %}
 
-        html[data-theme='dark'] {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
-        }
-
-        html[data-theme='dark'] body {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
-        }
-
-        html[data-theme='dark'] .card {
-            background-color: var(--card-bg-dark);
-            color: var(--text-color-dark);
-            border-color: var(--border-color-dark);
-        }
-
-        html[data-theme='dark'] .card-title a {
-            color: var(--text-color-dark);
-        }
-
-        html[data-theme='light'] .post-content {
-            color: #333333;
-            /* 纯黑色 */
-            line-height: 1.8;
-        }
-
-        html[data-theme='light'] .post-content p {
-            color: #333333;
-            /* 段落文字为黑色 */
-        }
-
-        html[data-theme='light'] .post-content li {
-            color: #333333;
-            /* 列表项文字为黑色 */
-        }
-
-        html[data-theme='light'] .post-content blockquote {
-            color: #333333;
-            /* 引用文字为深灰色 */
-            border-left-color: #0066cc;
-        }
-
-        html[data-theme='light'] h1 {
-            color: #333333;
-            /* 标题为深灰色 */
-            border-left-color: #0066cc;
-        }
-
-        html[data-theme='light'] h2 {
-            color: #333333;
-            /* 标题为深灰色 */
-            border-left-color: #0066cc;
-        }
-
-        html[data-theme='light'] h3 {
-            color: #333333;
-            /* 标题为深灰色 */
-            border-left-color: #0066cc;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .side-navigation {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            overflow-y: auto;
-            background-color: var(--card-bg-dark);
-            border-right: 1px solid var(--border-color-dark);
-            padding-top: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .side-navigation .blog-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color-dark);
-        }
-
-        .side-navigation .blog-title img {
-            max-width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .side-navigation .blog-title-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--text-color-dark);
-        }
-
-        .side-navigation .list-container {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .side-navigation .social-links {
-            padding: 15px;
-            text-align: center;
-            border-top: 1px solid var(--border-color-dark);
-        }
-
-        .side-navigation .social-links a {
-            color: var(--link-color-dark);
-            margin: 0 10px;
-            font-size: 24px;
-            transition: color 0.3s;
-        }
-
-        .side-navigation .social-links a:hover {
-            color: var(--link-hover-color-dark);
-        }
-
-        .side-navigation .list-group-item {
-            background-color: transparent;
-            border-color: var(--border-color-dark);
-            padding: 0.5rem 1rem;
-        }
-
-        .side-navigation .list-group-item a {
-            color: var(--link-color-dark);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .side-navigation .list-group-item a:hover {
-            color: var(--link-hover-color-dark);
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding-top: 20px;
-            width: 70%;
-            padding-right: 20px;
-            padding-left: 20px;
-        }
-
-        .post-content {
-            line-height: 1.8;
-            color: var(--text-color-dark);
-        }
-
-        .post-content img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 20px auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .post-content h1,
-        .post-content h2,
-        .post-content h3,
-        .post-content h4,
-        .post-content h5,
-        .post-content h6 {
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-color-dark);
-            font-weight: bold;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color-dark);
-        }
-
-        .post-content pre {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 15px;
-            overflow-x: auto;
-            margin-bottom: 1.5rem;
-        }
-
-        .post-content code {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        .post-content blockquote {
-            border-left: 4px solid #4da6ff;
-            padding-left: 15px;
-            color: #a0a0a0;
-            font-style: italic;
-            margin-bottom: 1.5rem;
-        }
-
-        .post-content table {
-            width: 100%;
-            margin-bottom: 1.5rem;
-            color: var(--text-color-dark);
-            border-collapse: collapse;
-        }
-
-        .post-content table th,
-        .post-content table td {
-            padding: 12px;
-            border: 1px solid #333;
-        }
-
-        .post-content table thead {
-            background-color: #2c2c2c;
-        }
-
-        .post-content ul,
-        .post-content ol {
-            padding-left: 30px;
-            margin-bottom: 1.5rem;
-        }
-
-        .post-content hr {
-            border-top: 1px solid #333;
-            margin: 1.5rem 0;
-        }
-
-        .post-content a {
-            color: #4da6ff;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .post-content a:hover {
-            color: #80bcff;
-            text-decoration: underline;
-        }
-
-        .post-content .task-list-item {
-            list-style-type: none;
-        }
-
-        .post-content .task-list-item input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        .social-links {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .social-links a {
-            margin: 0 10px;
-            color: var(--link-color-dark);
-            text-decoration: none;
-            font-size: 24px;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--link-hover-color-dark);
-        }
-
-        .code-block-container {
-            position: relative;
-        }
-
-        .copy-code-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.3s;
-            z-index: 10;
-        }
-
-        .copy-code-btn:hover {
-            color: #4da6ff;
-        }
-
-        .post-content pre {
-            position: relative;
-            padding-right: 40px;
-            /* 为复制按钮留出空间 */
-        }
-    </style>
-</head>
-
-<body>
-    <button class="btn btn-outline-primary theme-toggle" aria-label="切换主题">
-        <i class="fas fa-adjust"></i>
-    </button>
-
-    <!-- 侧边导航 -->
-    <div class="side-navigation">
-        <div class="blog-title">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="凤凰AI七社 Logo">
-            <span class="blog-title-text">凤凰AI七社</span>
-        </div>
-        <div class="list-container">
-            <ul class="list-group list-group-flush">
-                {% for recent_post in recent_posts[:20] %}
-                <li class="list-group-item">
-                    <a href="{{ url_for('show_post', slug=recent_post.slug) }}">
-                        {{ recent_post.title }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="social-links">
-            <a href="https://www.youtube.com/channel/UCvnn8Y8Oa7IYsr0baoDDl2w" target="_blank" title="YouTube频道">
-                <i class="fab fa-youtube"></i>
-            </a>
-        </div>
-    </div>
-
-    <div class="container-fluid main-content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h1 class="card-title mb-4">{{ post.title }}</h1>
-                        <p class="card-text text-muted mb-4">
-                            <small>发布于 {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-                        </p>
-                        <div class="post-content">
-                            {{ content | safe }}
-                        </div>
-                    </div>
-                </div>
-
-                {# 评论区域（可选） #}
-                {% if comments %}
-                <div class="card mt-4">
-                    <div class="card-header">
-                        评论
-                    </div>
-                    <div class="card-body">
-                        {% for comment in comments %}
-                        <div class="mb-3">
-                            <strong>{{ comment.author }}</strong>
-                            <p>{{ comment.content }}</p>
-                            <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-                        </div>
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title mb-4">{{ post.title }}</h1>
+                <p class="card-text text-muted mb-4">
+                    <small>发布于 {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    {% if post.tags %}
+                    <span class="ms-3">
+                        {% for tag in post.tags.split(',') %}
+                        <a href="{{ url_for('posts_by_tag', tag=tag.strip()) }}" class="badge bg-secondary text-decoration-none">{{ tag.strip() }}</a>
                         {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-            </div>
-        </div>
-
-        <!-- 删除文章确认模态框 -->
-        <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deletePostModalLabel">确认删除文章</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="deletePostForm" method="POST" action="{{ url_for('delete_post', post_id=post.id) }}">
-                            <div class="mb-3">
-                                <label for="deletePassword" class="form-label">请输入删除密码</label>
-                                <input type="password" class="form-control" id="deletePassword" name="delete_password"
-                                    required>
-                            </div>
-                            <button type="submit" class="btn btn-danger">确认删除</button>
-                        </form>
-                    </div>
+                    </span>
+                    {% endif %}
+                </p>
+                <div class="post-content">
+                    {{ content | safe }}
                 </div>
             </div>
         </div>
 
+        {% if comments %}
+        <div class="card mt-4">
+            <div class="card-header">
+                评论
+            </div>
+            <div class="card-body">
+                {% for comment in comments %}
+                <div class="mb-3">
+                    <strong>{{ comment.author }}</strong>
+                    <p>{{ comment.content }}</p>
+                    <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
-    </div>
+</div>
 
-
-
-    {# 隐藏的操作入口 #}
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div class="d-flex flex-column align-items-end">
-            <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
-                <i class="fas fa-home"></i> 返回首页
-            </a>
-            <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="fas fa-upload"></i> 上传文章
-            </a>
-            <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-outline-info btn-sm mb-2">
-                <i class="fas fa-edit"></i> 编辑文章
-            </a>
-            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                data-bs-target="#deletePostModal">
-                <i class="fas fa-trash"></i> 删除文章
-            </button>
+<div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePostModalLabel">确认删除文章</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="deletePostForm" method="POST" action="{{ url_for('delete_post', post_id=post.id) }}">
+                    <div class="mb-3">
+                        <label for="deletePassword" class="form-label">请输入删除密码</label>
+                        <input type="password" class="form-control" id="deletePassword" name="delete_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">确认删除</button>
+                </form>
+            </div>
         </div>
     </div>
+</div>
 
-
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="d-flex flex-column align-items-end">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm mb-2">
+            <i class="fas fa-home"></i> 返回首页
+        </a>
+        <a href="{{ url_for('upload_markdown') }}" class="btn btn-outline-secondary btn-sm mb-2">
+            <i class="fas fa-upload"></i> 上传文章
+        </a>
+        <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-outline-info btn-sm mb-2">
+            <i class="fas fa-edit"></i> 编辑文章
+        </a>
+        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePostModal">
+            <i class="fas fa-trash"></i> 删除文章
+        </button>
     </div>
-    <!-- 添加 Bootstrap 的 JavaScript 文件 -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+</div>
+{% endblock %}
 
+{% block extra_js %}
+<script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    function safeCopyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text);
+        }
+        try {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            return Promise.resolve();
+        } catch (err) {
+            console.error('复制失败:', err);
+            return Promise.reject(err);
+        }
+    }
 
-            // 安全的复制到剪贴板函数
-            function safeCopyToClipboard(text) {
-                // 检查 navigator.clipboard 是否可用
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    return navigator.clipboard.writeText(text);
-                }
+    document.querySelectorAll('pre code').forEach((block) => {
+        if (window.hljs) {
+            hljs.highlightBlock(block);
+        }
 
-                // 备用方案：使用临时文本区域
-                try {
-                    const textArea = document.createElement('textarea');
-                    textArea.value = text;
-                    textArea.style.position = 'fixed';
-                    textArea.style.left = '-9999px';
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    return Promise.resolve();
-                } catch (err) {
-                    console.error('复制失败:', err);
-                    return Promise.reject(err);
-                }
-            }
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-code-btn btn btn-sm btn-outline-secondary';
+        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+        copyButton.title = '复制代码';
+        copyButton.style.position = 'absolute';
+        copyButton.style.top = '10px';
+        copyButton.style.right = '10px';
+        copyButton.style.zIndex = '10';
 
-            // 代码高亮和复制按钮逻辑
-            document.querySelectorAll('pre code').forEach((block) => {
-                // 代码高亮
-                if (window.hljs) {
-                    hljs.highlightBlock(block);
-                }
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.position = 'relative';
 
-                // 创建复制按钮
-                const copyButton = document.createElement('button');
-                copyButton.className = 'copy-code-btn btn btn-sm btn-outline-secondary';
-                copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                copyButton.title = '复制代码';
-                copyButton.style.position = 'absolute';
-                copyButton.style.top = '10px';
-                copyButton.style.right = '10px';
-                copyButton.style.zIndex = '10';
+        block.parentNode.insertBefore(buttonContainer, block);
+        buttonContainer.appendChild(block);
+        buttonContainer.appendChild(copyButton);
 
-                // 创建按钮容器
-                const buttonContainer = document.createElement('div');
-                buttonContainer.style.position = 'relative';
-
-                // 将代码块和按钮放入容器
-                block.parentNode.insertBefore(buttonContainer, block);
-                buttonContainer.appendChild(block);
-                buttonContainer.appendChild(copyButton);
-
-                // 复制功能
-                copyButton.addEventListener('click', () => {
-                    const code = block.textContent;
-                    safeCopyToClipboard(code).then(() => {
-                        copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                        copyButton.classList.add('text-success');
-                        setTimeout(() => {
-                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                            copyButton.classList.remove('text-success');
-                        }, 2000);
-                    }).catch(err => {
-                        console.error('复制失败:', err);
-                        alert('复制代码失败');
-                    });
-                });
+        copyButton.addEventListener('click', () => {
+            const code = block.textContent;
+            safeCopyToClipboard(code).then(() => {
+                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                copyButton.classList.add('text-success');
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyButton.classList.remove('text-success');
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制代码失败');
             });
-
-
-
-
-            // 删除文章模态框处理
-            const deletePostForm = document.getElementById('deletePostForm');
-            if (deletePostForm) {
-                deletePostForm.addEventListener('submit', function (e) {
-                    e.preventDefault(); // 阻止默认提交
-
-                    const formData = new FormData(this);
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                            } else {
-                                return response.text();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('删除文章时发生错误:', error);
-                            alert('删除文章失败，请重试');
-                        });
-                });
-            }
-
-            const themeToggle = document.querySelector('.theme-toggle');
-            const htmlElement = document.documentElement;
-
-            // 初始化主题为黑暗模式
-            htmlElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('blog-theme', 'dark');
-
-            // 主题切换逻辑
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-                htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('blog-theme', newTheme);
-            });
-
-            // 代码高亮
-
         });
-    </script>
+    });
 
-</body>
-
-</html>
+    const deletePostForm = document.getElementById('deletePostForm');
+    if (deletePostForm) {
+        deletePostForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.text();
+                }
+            })
+            .catch(error => {
+                console.error('删除文章时发生错误:', error);
+                alert('删除文章失败，请重试');
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
